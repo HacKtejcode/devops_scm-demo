@@ -9,7 +9,28 @@ pipeline{
             }
             steps{
                 bat 'java -version'
-                bat 'javac -version'
+                pipeline{
+    agent any
+
+    stages{
+        stage('Use Custom Node.js'){
+            steps{
+                script{
+                    def nodeHome=tool{
+                        name:'NodeJS',
+                        type:'com.cloudbees.jenkins.plugins.customtools.CustomTool'    
+                    }
+
+
+                    withEnv(["PATH+NODEJS=${nodeHome}\\node"]){
+                        bat 'node --version'
+                        bat 'npm  --version'
+                    }    
+                }
+            }
+        }
+    }
+}bat 'javac -version'
                 bat 'echo JAVA_HOME=%JAVA_HOME%'
                 bat "echo Using Java 17 from Jenkins"
                 }
@@ -44,3 +65,4 @@ pipeline{
             }
         }
 }
+
